@@ -9,11 +9,15 @@ import (
 )
 
 func main() {
-	app := app.NewApp()
+	projectID := os.Getenv("PROJECT_ID")
+	app, err := app.NewApp(projectID)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "18080"
 	}
 	if err := http.ListenAndServe(":"+port, app.Handler()); err != nil {
 		log.Fatal(err)

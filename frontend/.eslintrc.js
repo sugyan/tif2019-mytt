@@ -26,8 +26,16 @@ module.exports = {
     "rules": {
         "semi": "warn",
         "quotes": "warn",
-        "comma-dangle": ["warn", {
-            "functions": "always-multiline"
-        }]
+        "comma-dangle": [
+            "warn", {
+                "functions": "always-multiline"
+            }
+        ],
+        "@typescript-eslint/indent": [
+            "warn", 4, {
+                "ignoredNodes": ["JSXElement"]
+            }
+        ],
+        "react/jsx-indent": ["warn", 2]
     }
 };
