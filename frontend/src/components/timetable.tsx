@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+import ja from "date-fns/locale/ja";
 import * as React from "react";
 import { connect } from "react-redux";
 
@@ -11,17 +13,32 @@ interface StateProps {
 class TimeTable extends React.Component<StateProps> {
     public render(): JSX.Element {
         const { items } = this.props;
-        const results: JSX.Element[] = items.map((item: Item): JSX.Element => {
+        const rows: JSX.Element[] = items.map((item: Item): JSX.Element => {
+            let content = item.artist;
+            if (item.details) {
+                content += ` [${item.details.join(", ")}]`;
+            }
             return (
-              <li key={item.id}>
-                <div>{item.start.toString()} {item.stage} {item.artist}</div>
-              </li>
+              <tr key={item.id}>
+                <td>
+                  <label>
+                    {format(item.start, "M/D(dd) HH:mm", { locale: ja })} - {format(item.end, "HH:mm")}
+                  </label>
+                </td>
+                <td>
+                  <small>{item.stage}</small>
+                  <br />
+                  <strong>{content}</strong>
+                </td>
+              </tr>
             );
         });
         return (
-          <ul>
-            {results}
-          </ul>
+          <table className="table">
+            <tbody>
+              {rows}
+            </tbody>
+          </table>
         );
     }
 }

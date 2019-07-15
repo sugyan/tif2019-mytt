@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 )
@@ -91,6 +92,9 @@ func (app *App) storeTimeTable(timetable *timetable) error {
 			}
 		}
 	}
+	sort.SliceStable(entries, func(i, j int) bool {
+		return entries[i].Start.Unix() < entries[j].Start.Unix()
+	})
 	data := &entityTimeTable{
 		Stages: entries,
 	}
