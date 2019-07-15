@@ -62,6 +62,11 @@ func (app *App) storeTimeTable(timetable *timetable) error {
 		for j, items := range [][]*stageitem{s.HotStage, s.DollFactory, s.SkyStage, s.SmileGarden, s.FestivalStage, s.DreamStage, s.InfoCentre, s.FujiYokoStage} {
 			stage := []string{"HOTSTAGE", "DOLLFACTORY", "SKYSTAGE", "SMILEGARDEN", "FESTIVALSTAGE", "DREAMSTAGE", "INFOCENTRE", "FUJIYOKOSTAGE"}[j]
 			for _, item := range items {
+				// skip specified items...
+				if item.Artist == "メンテナンス" {
+					continue
+				}
+
 				id := fmt.Sprintf("%s-%s-%s", day, stage, item.Start)
 				start, _ := time.Parse("2006-01-02 1504 -0700", fmt.Sprintf("2019-08-%02d %s +0900", i+2, item.Start))
 				end, _ := time.Parse("2006-01-02 1504 -0700", fmt.Sprintf("2019-08-%02d %s +0900", i+2, item.End))
