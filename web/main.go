@@ -9,8 +9,7 @@ import (
 )
 
 func main() {
-	projectID := os.Getenv("PROJECT_ID")
-	app, err := app.NewApp(projectID)
+	app, err := app.NewApp()
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -13,12 +13,14 @@ import (
 )
 
 type entry struct {
-	ID      string    `json:"id"`
-	Stage   string    `json:"stage"`
-	Start   time.Time `json:"start"`
-	End     time.Time `json:"end"`
-	Artist  string    `json:"artist"`
-	Details []string  `json:"details"`
+	ID        string    `json:"id"`
+	DayCode   string    `json:"day_code"`
+	StageName string    `json:"stage_name"`
+	StageCode string    `json:"stage_code"`
+	Start     time.Time `json:"start"`
+	End       time.Time `json:"end"`
+	Artist    string    `json:"artist"`
+	Details   []string  `json:"details"`
 }
 
 func (app *App) adminHandler() http.Handler {
@@ -59,16 +61,17 @@ func fetchTimeTable() (*timetable, error) {
 func (app *App) storeTimeTable(timetable *timetable) error {
 	entries := []*entry{}
 	for i, s := range []*stages{timetable.Day1, timetable.Day2, timetable.Day3} {
-		day := []string{"DAY1", "DAY2", "DAY3"}[i]
+		dayCode := []string{"day1", "day2", "day3"}[i]
 		for j, items := range [][]*stageitem{s.HotStage, s.DollFactory, s.SkyStage, s.SmileGarden, s.FestivalStage, s.DreamStage, s.InfoCentre, s.FujiYokoStage} {
-			stage := []string{"HOTSTAGE", "DOLLFACTORY", "SKYSTAGE", "SMILEGARDEN", "FESTIVALSTAGE", "DREAMSTAGE", "INFOCENTRE", "FUJIYOKOSTAGE"}[j]
+			stageName := []string{"HOT STAGE", "DOLL FACTORY", "SKY STAGE", "SMILE GARDEN", "FESTIVAL STAGE", "DREAM STAGE", "INFO CENTRE", "FUJI YOKO STAGE"}[j]
+			stageCode := strings.ToLower(strings.ReplaceAll(stageName, " ", ""))
 			for _, item := range items {
 				// skip specified items...
 				if item.Artist == "メンテナンス" {
 					continue
 				}
 
-				id := fmt.Sprintf("%s-%s-%s", day, stage, item.Start)
+				id := fmt.Sprintf("%s-%s-%s", dayCode, stageCode, item.Start)
 				start, _ := time.Parse("2006-01-02 1504 -0700", fmt.Sprintf("2019-08-%02d %s +0900", i+2, item.Start))
 				end, _ := time.Parse("2006-01-02 1504 -0700", fmt.Sprintf("2019-08-%02d %s +0900", i+2, item.End))
 				artist := strings.Trim(item.Artist, " ")
@@ -82,12 +85,14 @@ func (app *App) storeTimeTable(timetable *timetable) error {
 					}
 				}
 				entries = append(entries, &entry{
-					ID:      id,
-					Stage:   stage,
-					Start:   start,
-					End:     end,
-					Artist:  artist,
-					Details: details,
+					ID:        id,
+					DayCode:   dayCode,
+					StageName: stageName,
+					StageCode: stageCode,
+					Start:     start,
+					End:       end,
+					Artist:    artist,
+					Details:   details,
 				})
 			}
 		}

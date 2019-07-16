@@ -20,21 +20,29 @@ class TimeTable extends React.Component<StateProps> {
             }
             return (
               <tr key={item.id}>
-                <td>
-                  <label>
-                    {format(item.start, "M/D(dd) HH:mm", { locale: ja })} - {format(item.end, "HH:mm")}
-                  </label>
+                <td className="column-datetime">
+                  <div className="form-check">
+                    <label className="form-check-label">
+                      <input
+                          id={item.id}
+                          type="checkbox"
+                          className="form-check-input" />
+                      {format(item.start, "M/D(dd) HH:mm", { locale: ja })} - {format(item.end, "HH:mm")}
+                    </label>
+                  </div>
                 </td>
-                <td>
-                  <small>{item.stage}</small>
-                  <br />
-                  <strong>{content}</strong>
+                <td className={`column-stage ${item.stageCode}`}>
+                  <label htmlFor={item.id}>
+                    <small>{item.stageName}</small>
+                    <br />
+                    <strong>{content}</strong>
+                  </label>
                 </td>
               </tr>
             );
         });
         return (
-          <table className="table">
+          <table className="table table-sm">
             <tbody>
               {rows}
             </tbody>

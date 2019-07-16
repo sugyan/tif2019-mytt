@@ -13,18 +13,16 @@ import (
 
 // App type
 type App struct {
-	projectID string
-	dsClient  *datastore.Client
+	dsClient *datastore.Client
 }
 
 // NewApp function
-func NewApp(projectID string) (*App, error) {
-	dsClient, err := datastore.NewClient(context.Background(), projectID)
+func NewApp() (*App, error) {
+	dsClient, err := datastore.NewClient(context.Background(), os.Getenv("GOOGLE_CLOUD_PROJECT"))
 	if err != nil {
 		return nil, err
 	}
 	return &App{
-		projectID,
 		dsClient,
 	}, nil
 }
@@ -35,6 +33,7 @@ func (app *App) Handler() http.Handler {
 	mux.Handle("/", http.HandlerFunc(app.indexHandler))
 	mux.Handle("/api/", http.StripPrefix("/api", app.apiHandler()))
 	mux.Handle("/admin/", http.StripPrefix("/admin", app.adminHandler()))
+	mux.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("static"))))
 	return mux
 }
 
@@ -46,10 +45,10 @@ func (app *App) indexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := map[string]interface{}{}
-	if os.Getenv("GAE_APPLICATION") != "" {
-		data["js"] = "/static/js"
-	} else {
+	if os.Getenv("DEBUG") != "" {
 		data["js"] = "http://localhost:8080"
+	} else {
+		data["js"] = "/static/js"
 	}
 	w.Header().Set("Content-Type", "text/html")
 	if err := t.Execute(w, data); err != nil {

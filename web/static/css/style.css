@@ -1,0 +1,46 @@
+.column-datetime {
+    white-space: nowrap;
+}
+
+.column-stage {
+    padding: 4px;
+    width: 100%;
+}
+
+.hotstage {
+    background-color: #FA3D56;
+}
+.smilegarden {
+    background-color: #B1DD00;
+}
+.dreamstage {
+    background-color: #00C858;
+}
+.dollfactory {
+    background-color: #FF88B4;
+}
+.skystage {
+    background-color: #39CDFE;
+}
+.festivalstage {
+    background-color: #FFDF33;
+}
+.fujiyokostage {
+    background-color: #06708F;
+}
+.infocentre {
+    background-color: #FB3CA6;
+}
+.greetingarea {
+    background-color: #808080;
+}
+
+.column-stage > label {
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    font-weight: normal;
+    margin-bottom: initial;
+    padding: 4px;
+}

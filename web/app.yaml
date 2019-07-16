@@ -7,6 +7,3 @@ handlers:
 - url: /.*
   script: auto
   secure: always
-
-env_variables:
-  PROJECT_ID: "tif2019-mytt"

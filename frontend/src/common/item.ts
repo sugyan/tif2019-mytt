@@ -2,7 +2,9 @@ export interface Item {
     id: string;
     start: Date;
     end: Date;
-    stage: string;
+    dayCode: string;
+    stageName: string;
+    stageCode: string;
     artist: string;
     details: string[];
 }

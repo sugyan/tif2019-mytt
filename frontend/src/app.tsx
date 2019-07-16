@@ -10,7 +10,9 @@ import { AppState } from "./redux/store";
 
 interface Result {
     id: string;
-    stage: string;
+    day_code: string;
+    stage_name: string;
+    stage_code: string;
     start: string;
     end: string;
     artist: string;
@@ -34,7 +36,9 @@ class App extends React.Component<DispatchProps> {
                     id: result.id,
                     start: parse(result.start),
                     end: parse(result.end),
-                    stage: result.stage,
+                    dayCode: result.day_code,
+                    stageName: result.stage_name,
+                    stageCode: result.stage_code,
                     artist: result.artist,
                     details: result.details,
                 };
