@@ -23,6 +23,11 @@ module.exports = {
         "@typescript-eslint",
         "react"
     ],
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
     "rules": {
         "semi": "warn",
         "quotes": "warn",

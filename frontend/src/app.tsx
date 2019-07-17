@@ -1,4 +1,4 @@
-import { parse } from "date-fns";
+import dayjs from "dayjs";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -34,8 +34,8 @@ class App extends React.Component<DispatchProps> {
             updateTimeTable(results.map((result: Result): Item => {
                 return {
                     id: result.id,
-                    start: parse(result.start),
-                    end: parse(result.end),
+                    start: dayjs(result.start),
+                    end: dayjs(result.end),
                     dayCode: result.day_code,
                     stageName: result.stage_name,
                     stageCode: result.stage_code,

@@ -1,5 +1,4 @@
-import { format } from "date-fns";
-import ja from "date-fns/locale/ja";
+import "dayjs/locale/ja";
 import * as React from "react";
 import { connect } from "react-redux";
 
@@ -27,7 +26,7 @@ class TimeTable extends React.Component<StateProps> {
                           id={item.id}
                           type="checkbox"
                           className="form-check-input" />
-                      {format(item.start, "M/D(dd) HH:mm", { locale: ja })} - {format(item.end, "HH:mm")}
+                      {item.start.locale("ja").format("M/D(dd) HH:mm")} - {item.end.format("HH:mm")}
                     </label>
                   </div>
                 </td>
