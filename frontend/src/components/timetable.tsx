@@ -3,16 +3,23 @@ import * as React from "react";
 import { connect } from "react-redux";
 
 import { Item } from "../common/item";
+import { TimeTableState, FilterState, Stages } from "../redux/reducers";
 import { AppState } from "../redux/store";
 
 interface StateProps {
-    items: Item[];
+    timetable: TimeTableState;
+    filter: FilterState;
 }
 
 class TimeTable extends React.Component<StateProps> {
     public render(): JSX.Element {
-        const { items } = this.props;
-        const rows: JSX.Element[] = items.map((item: Item): JSX.Element => {
+        const { timetable, filter } = this.props;
+        const rows: JSX.Element[] = timetable.items.filter((item: Item): boolean => {
+            if (!filter.stages[item.stageCode as keyof Stages]) {
+                return false;
+            }
+            return true;
+        }).map((item: Item): JSX.Element => {
             let content = item.artist;
             if (item.details) {
                 content += ` [${item.details.join(", ")}]`;
@@ -50,5 +57,10 @@ class TimeTable extends React.Component<StateProps> {
     }
 }
 export default connect(
-    (state: AppState): StateProps => state.timetable,
+    (state: AppState): StateProps => {
+        return {
+            timetable: state.timetable,
+            filter: state.filter,
+        };
+    },
 )(TimeTable);

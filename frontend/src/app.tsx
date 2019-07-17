@@ -1,10 +1,11 @@
 import dayjs from "dayjs";
 import * as React from "react";
 import { connect } from "react-redux";
+import { BrowserRouter, Route, Link } from "react-router-dom";
 import { Dispatch } from "redux";
 
+import Index from "./components";
 import { Item } from "./common/item";
-import TimeTable from "./components/timetable";
 import { updateTimeTable, UpdateTimeTableAction } from "./redux/actions";
 import { AppState } from "./redux/store";
 
@@ -49,14 +50,24 @@ class App extends React.Component<DispatchProps> {
     }
     public render(): JSX.Element {
         return (
-          <React.Fragment>
-            <TimeTable />
-          </React.Fragment>
+          <BrowserRouter>
+            <div style={{ paddingTop: 56 }}>
+              <nav className="navbar fixed-top navbar-dark bg-dark">
+                <div className="container-fluid">
+                  <Link to="/" className="navbar-brand">TIF 2019 MyTT</Link>
+                </div>
+              </nav>
+              <div className="container">
+                <Route path="/" exact component={Index} />
+                <Route path="/result" render={(): JSX.Element => <div>result</div>}/>
+              </div>
+            </div>
+          </BrowserRouter>
         );
     }
 }
 export default connect(
-    (state: AppState): {} => state,
+    (state: AppState): AppState => state,
     (dispatch: Dispatch<UpdateTimeTableAction>): DispatchProps => {
         return {
             updateTimeTable: (items: Item[]): void => {
