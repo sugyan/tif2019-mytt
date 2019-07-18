@@ -51,8 +51,8 @@ class App extends React.Component<DispatchProps> {
     public render(): JSX.Element {
         return (
           <BrowserRouter>
-            <div style={{ paddingTop: 56 }}>
-              <nav className="navbar fixed-top navbar-dark bg-dark">
+            <div>
+              <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container-fluid">
                   <Link to="/" className="navbar-brand">TIF 2019 MyTT</Link>
                 </div>

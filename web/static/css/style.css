@@ -44,3 +44,18 @@
     margin-bottom: initial;
     padding: 4px;
 }
+
+@media (max-width: 768px) {
+    html {
+        font-size: 95%;
+    }
+    .container {
+        padding: 0 10px;
+    }
+    .table td {
+        padding: 5px;
+    }
+    .table .form-check label {
+        font-size: 90%;
+    }
+}

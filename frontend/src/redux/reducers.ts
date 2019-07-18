@@ -1,13 +1,22 @@
 import { combineReducers, Reducer } from "redux";
 
-import { UpdateTimeTableAction, UPDATE_TIMETABLE, ToggleCheckboxAction, TOGGLE_CHECKBOX } from "./actions";
+import {
+    UPDATE_TIMETABLE, TOGGLE_FILTER_DAYS, TOGGLE_FILTER_STAGES, CHANGE_FILTER_KEYWORD,
+    UpdateTimeTableAction, ToggleFilterDaysAction, ToggleFilterStagesAction, ChangeFilterKeywordAction,
+} from "./actions";
 import { Item } from "../common/item";
 
 export interface TimeTableState {
     items:  Item[];
 }
 
-export interface Stages {
+export interface FilterDays {
+    day1: boolean;
+    day2: boolean;
+    day3: boolean;
+}
+
+export interface FilterStages {
     hotstage:      boolean;
     dollfactory:   boolean;
     skystage:      boolean;
@@ -19,7 +28,9 @@ export interface Stages {
 }
 
 export interface FilterState {
-    stages: Stages;
+    days: FilterDays;
+    stages: FilterStages;
+    keyword: string;
 }
 
 const timetable: Reducer<TimeTableState> = combineReducers({
@@ -34,7 +45,22 @@ const timetable: Reducer<TimeTableState> = combineReducers({
 });
 
 const filter: Reducer<FilterState> = combineReducers({
-    stages: (state: Stages = {
+    days: (state: FilterDays = {
+        day1: true,
+        day2: true,
+        day3: true,
+    }, action: ToggleFilterDaysAction): FilterDays => {
+        switch (action.type) {
+        case TOGGLE_FILTER_DAYS:
+            return {
+                ...state,
+                [action.key]: !state[action.key as keyof FilterDays],
+            };
+        default:
+            return state;
+        }
+    },
+    stages: (state: FilterStages = {
         hotstage:      true,
         dollfactory:   true,
         skystage:      true,
@@ -43,13 +69,21 @@ const filter: Reducer<FilterState> = combineReducers({
         dreamstage:    true,
         infocentre:    true,
         fujiyokostage: true,
-    }, action: ToggleCheckboxAction): Stages => {
+    }, action: ToggleFilterStagesAction): FilterStages => {
         switch (action.type) {
-        case TOGGLE_CHECKBOX:
+        case TOGGLE_FILTER_STAGES:
             return {
                 ...state,
-                [action.key]: !state[action.key as keyof Stages],
+                [action.key]: !state[action.key as keyof FilterStages],
             };
+        default:
+            return state;
+        }
+    },
+    keyword: (state: string = "", action: ChangeFilterKeywordAction): string => {
+        switch (action.type) {
+        case CHANGE_FILTER_KEYWORD:
+            return action.word;
         default:
             return state;
         }

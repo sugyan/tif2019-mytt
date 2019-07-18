@@ -3,7 +3,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 
 import { Item } from "../common/item";
-import { TimeTableState, FilterState, Stages } from "../redux/reducers";
+import { TimeTableState, FilterState, FilterDays, FilterStages } from "../redux/reducers";
 import { AppState } from "../redux/store";
 
 interface StateProps {
@@ -14,9 +14,19 @@ interface StateProps {
 class TimeTable extends React.Component<StateProps> {
     public render(): JSX.Element {
         const { timetable, filter } = this.props;
+        const regexp = filter.keyword ? new RegExp(filter.keyword, "i") : null;
         const rows: JSX.Element[] = timetable.items.filter((item: Item): boolean => {
-            if (!filter.stages[item.stageCode as keyof Stages]) {
+            if (!filter.days[item.dayCode as keyof FilterDays]) {
                 return false;
+            }
+            if (!filter.stages[item.stageCode as keyof FilterStages]) {
+                return false;
+            }
+            if (regexp) {
+                if (item.details && regexp.test(item.details.join(" "))) {
+                    return true;
+                }
+                return regexp.test(item.artist);
             }
             return true;
         }).map((item: Item): JSX.Element => {
@@ -37,7 +47,7 @@ class TimeTable extends React.Component<StateProps> {
                     </label>
                   </div>
                 </td>
-                <td className={`column-stage ${item.stageCode}`}>
+                <td className={`column-stage ${item.stageCode}`} style={{ padding: 4 }}>
                   <label htmlFor={item.id}>
                     <small>{item.stageName}</small>
                     <br />
@@ -48,11 +58,14 @@ class TimeTable extends React.Component<StateProps> {
             );
         });
         return (
-          <table className="table table-sm">
-            <tbody>
-              {rows}
-            </tbody>
-          </table>
+          <React.Fragment>
+            <p>全{rows.length}件</p>
+            <table className="table">
+              <tbody>
+                {rows}
+              </tbody>
+            </table>
+          </React.Fragment>
         );
     }
 }
