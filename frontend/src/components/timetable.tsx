@@ -3,6 +3,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 
 import { Item } from "../common/item";
+import { escapeRegExp } from "../common/utils";
 import { TimeTableState, FilterState, FilterDays, FilterStages } from "../redux/reducers";
 import { AppState } from "../redux/store";
 
@@ -14,7 +15,7 @@ interface StateProps {
 class TimeTable extends React.Component<StateProps> {
     public render(): JSX.Element {
         const { timetable, filter } = this.props;
-        const regexp = filter.keyword ? new RegExp(filter.keyword, "i") : null;
+        const regexp = filter.keyword ? new RegExp(escapeRegExp(filter.keyword), "i") : null;
         const rows: JSX.Element[] = timetable.items.filter((item: Item): boolean => {
             if (!filter.days[item.dayCode as keyof FilterDays]) {
                 return false;
