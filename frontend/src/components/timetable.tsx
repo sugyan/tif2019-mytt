@@ -1,4 +1,3 @@
-import "dayjs/locale/ja";
 import * as React from "react";
 import { connect } from "react-redux";
 
@@ -44,7 +43,7 @@ class TimeTable extends React.Component<StateProps> {
                           id={item.id}
                           type="checkbox"
                           className="form-check-input" />
-                      {item.start.locale("ja").format("M/D(dd) HH:mm")} - {item.end.format("HH:mm")}
+                      {item.time}
                     </label>
                   </div>
                 </td>

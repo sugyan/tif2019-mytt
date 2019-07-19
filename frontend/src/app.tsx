@@ -1,3 +1,4 @@
+import "dayjs/locale/ja";
 import dayjs from "dayjs";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -9,7 +10,7 @@ import { Item } from "./common/item";
 import { updateTimeTable, UpdateTimeTableAction } from "./redux/actions";
 import { AppState } from "./redux/store";
 
-interface Result {
+interface ResponseItem {
     id: string;
     day_code: string;
     stage_name: string;
@@ -29,14 +30,16 @@ class App extends React.Component<DispatchProps> {
         const { updateTimeTable } = this.props;
         fetch(
             "/api/timetable",
-        ).then((response: Response): Promise<Result[]> => {
+        ).then((response: Response): Promise<ResponseItem[]> => {
             return response.json();
-        }).then((results: Result[]): void => {
-            updateTimeTable(results.map((result: Result): Item => {
+        }).then((results: ResponseItem[]): void => {
+            updateTimeTable(results.map((result: ResponseItem): Item => {
+                const start = dayjs(result.start);
+                const end = dayjs(result.end);
+                const time = `${start.locale("ja").format("M/D(dd) HH:mm")} - ${end.format("HH:mm")}`;
                 return {
                     id: result.id,
-                    start: dayjs(result.start),
-                    end: dayjs(result.end),
+                    time,
                     dayCode: result.day_code,
                     stageName: result.stage_name,
                     stageCode: result.stage_code,
