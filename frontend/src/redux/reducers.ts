@@ -6,7 +6,7 @@ import {
     UpdateTimetableAction, SelectTimetable, SelectTimetableItemsAction, ToggleFilterDaysAction, ToggleFilterStagesAction, ChangeFilterKeywordAction,
 } from "./actions";
 
-export interface TimeTableState {
+export interface TimetableState {
     items:  Item[];
     selected: Set<string>;
 }
@@ -34,7 +34,7 @@ export interface FilterState {
     keyword: string;
 }
 
-const timetable: Reducer<TimeTableState> = combineReducers({
+const timetable: Reducer<TimetableState> = combineReducers({
     items: (state: Item[] = [], action: UpdateTimetableAction): Item[] => {
         switch (action.type) {
         case UPDATE_TIMETABLE:

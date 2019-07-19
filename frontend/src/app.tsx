@@ -5,7 +5,8 @@ import { connect } from "react-redux";
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import { Dispatch } from "redux";
 
-import Index from "./components";
+import Index from "./components/index";
+import Result from "./components/result";
 import { Item } from "./common/item";
 import { TimetableAction, updateTimetable } from "./redux/actions";
 import { AppState } from "./redux/store";
@@ -62,7 +63,7 @@ class App extends React.Component<DispatchProps> {
               </nav>
               <div className="container">
                 <Route path="/" exact component={Index} />
-                <Route path="/result" render={(): JSX.Element => <div>result</div>}/>
+                <Route path="/result" component={Result} />
               </div>
             </div>
           </BrowserRouter>

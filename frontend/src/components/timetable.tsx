@@ -4,12 +4,12 @@ import { connect } from "react-redux";
 import { Item } from "../common/item";
 import { escapeRegExp } from "../common/utils";
 import { TimetableAction, SelectTimetable, selectTimetableItems } from "../redux/actions";
-import { TimeTableState, FilterState, FilterDays, FilterStages } from "../redux/reducers";
+import { TimetableState, FilterState, FilterDays, FilterStages } from "../redux/reducers";
 import { AppState } from "../redux/store";
 import { Dispatch } from "redux";
 
 interface StateProps {
-    timetable: TimeTableState;
+    timetable: TimetableState;
     filter: FilterState;
 }
 
@@ -19,7 +19,7 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-class TimeTable extends React.Component<Props> {
+class Timetable extends React.Component<Props> {
     public render(): JSX.Element {
         const { timetable, filter } = this.props;
         const regexp = filter.keyword ? new RegExp(escapeRegExp(filter.keyword), "i") : null;
@@ -101,4 +101,4 @@ export default connect(
             },
         };
     }
-)(TimeTable);
+)(Timetable);
