@@ -3,15 +3,23 @@ import { connect } from "react-redux";
 
 import { Item } from "../common/item";
 import { escapeRegExp } from "../common/utils";
+import { TimetableAction, SelectTimetable, selectTimetableItems } from "../redux/actions";
 import { TimeTableState, FilterState, FilterDays, FilterStages } from "../redux/reducers";
 import { AppState } from "../redux/store";
+import { Dispatch } from "redux";
 
 interface StateProps {
     timetable: TimeTableState;
     filter: FilterState;
 }
 
-class TimeTable extends React.Component<StateProps> {
+interface DispatchProps {
+    selectItem: (select: SelectTimetable) => void;
+}
+
+type Props = StateProps & DispatchProps;
+
+class TimeTable extends React.Component<Props> {
     public render(): JSX.Element {
         const { timetable, filter } = this.props;
         const regexp = filter.keyword ? new RegExp(escapeRegExp(filter.keyword), "i") : null;
@@ -42,7 +50,9 @@ class TimeTable extends React.Component<StateProps> {
                       <input
                           id={item.id}
                           type="checkbox"
-                          className="form-check-input" />
+                          className="form-check-input"
+                          checked={timetable.selected.has(item.id)}
+                          onChange={this.onChangeCheckbox.bind(this)} />
                       {item.time}
                     </label>
                   </div>
@@ -68,6 +78,14 @@ class TimeTable extends React.Component<StateProps> {
           </React.Fragment>
         );
     }
+    private onChangeCheckbox(event: React.FormEvent<HTMLInputElement>): void {
+        const { selectItem } = this.props;
+        const target = event.target as HTMLInputElement;
+        selectItem({
+            id: target.id,
+            selected: target.checked,
+        });
+    }
 }
 export default connect(
     (state: AppState): StateProps => {
@@ -76,4 +94,11 @@ export default connect(
             filter: state.filter,
         };
     },
+    (dispatch: Dispatch<TimetableAction>): DispatchProps => {
+        return {
+            selectItem: (select: SelectTimetable): void => {
+                dispatch(selectTimetableItems([select]));
+            },
+        };
+    }
 )(TimeTable);

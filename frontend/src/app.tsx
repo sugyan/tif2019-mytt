@@ -7,7 +7,7 @@ import { Dispatch } from "redux";
 
 import Index from "./components";
 import { Item } from "./common/item";
-import { updateTimeTable, UpdateTimeTableAction } from "./redux/actions";
+import { TimetableAction, updateTimetable } from "./redux/actions";
 import { AppState } from "./redux/store";
 
 interface ResponseItem {
@@ -71,10 +71,10 @@ class App extends React.Component<DispatchProps> {
 }
 export default connect(
     (state: AppState): AppState => state,
-    (dispatch: Dispatch<UpdateTimeTableAction>): DispatchProps => {
+    (dispatch: Dispatch<TimetableAction>): DispatchProps => {
         return {
             updateTimeTable: (items: Item[]): void => {
-                dispatch(updateTimeTable(items));
+                dispatch(updateTimetable(items));
             },
         };
     },

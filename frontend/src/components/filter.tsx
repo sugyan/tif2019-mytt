@@ -5,9 +5,8 @@ import { Dispatch } from "redux";
 import { FilterAction, toggleFilterDays, toggleFilterStages, changeFilterKeyword } from "../redux/actions";
 import { FilterState, FilterDays, FilterStages } from "../redux/reducers";
 import { AppState } from "../redux/store";
-import { withRouter } from "react-router";
 
-interface Check {
+interface CheckForm {
     key: string;
     label: string;
 }
@@ -29,8 +28,8 @@ interface State {
 type Props = StateProps & DispatchProps
 
 class Filter extends React.Component<Props, State> {
-    private days: Check[];
-    private stages: Check[];
+    private days: CheckForm[];
+    private stages: CheckForm[];
     public constructor(props: Props) {
         super(props);
         this.days = [
@@ -53,7 +52,7 @@ class Filter extends React.Component<Props, State> {
     public render(): JSX.Element {
         const { filter, toggleDays, toggleStages } = this.props;
         const { keyword } = this.state;
-        const days = this.days.map((check: Check): JSX.Element => {
+        const days = this.days.map((check: CheckForm): JSX.Element => {
             return (
               <div key={check.key} className="form-check form-check-inline">
                 <input
@@ -66,7 +65,7 @@ class Filter extends React.Component<Props, State> {
               </div>
             );
         });
-        const stages = this.stages.map((check: Check): JSX.Element => {
+        const stages = this.stages.map((check: CheckForm): JSX.Element => {
             return (
               <div key={check.key} className="form-check form-check-inline">
                 <input

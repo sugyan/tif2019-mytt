@@ -1,13 +1,14 @@
 import { combineReducers, Reducer } from "redux";
 
-import {
-    UPDATE_TIMETABLE, TOGGLE_FILTER_DAYS, TOGGLE_FILTER_STAGES, CHANGE_FILTER_KEYWORD,
-    UpdateTimeTableAction, ToggleFilterDaysAction, ToggleFilterStagesAction, ChangeFilterKeywordAction,
-} from "./actions";
 import { Item } from "../common/item";
+import {
+    UPDATE_TIMETABLE, SELECT_TIMETABLE_ITEMS, TOGGLE_FILTER_DAYS, TOGGLE_FILTER_STAGES, CHANGE_FILTER_KEYWORD,
+    UpdateTimetableAction, SelectTimetable, SelectTimetableItemsAction, ToggleFilterDaysAction, ToggleFilterStagesAction, ChangeFilterKeywordAction,
+} from "./actions";
 
 export interface TimeTableState {
     items:  Item[];
+    selected: Set<string>;
 }
 
 export interface FilterDays {
@@ -34,10 +35,25 @@ export interface FilterState {
 }
 
 const timetable: Reducer<TimeTableState> = combineReducers({
-    items: (state = [], action: UpdateTimeTableAction): Item[] => {
+    items: (state: Item[] = [], action: UpdateTimetableAction): Item[] => {
         switch (action.type) {
         case UPDATE_TIMETABLE:
             return action.items;
+        default:
+            return state;
+        }
+    },
+    selected: (state: Set<string> = new Set(), action: SelectTimetableItemsAction): Set<string> => {
+        switch (action.type) {
+        case SELECT_TIMETABLE_ITEMS:
+            action.selects.forEach((value: SelectTimetable): void => {
+                if (value.selected) {
+                    state.add(value.id);
+                } else {
+                    state.delete(value.id);
+                }
+            });
+            return new Set(state);
         default:
             return state;
         }
