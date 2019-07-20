@@ -47,7 +47,7 @@ class Filter extends React.Component<Props, State> {
             { key: "fujiyokostage", label: "FUJI YOKO STAGE" },
             { key: "infocentre",    label: "INFO CENTRE"     },
         ];
-        this.state = { keyword: "" };
+        this.state = { keyword: props.filter.keyword };
     }
     public render(): JSX.Element {
         const { filter, toggleDays, toggleStages } = this.props;

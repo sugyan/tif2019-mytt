@@ -47,7 +47,7 @@ class Result extends React.Component<Props, States> {
         const { image } = this.state;
         const result = image
             ? <img src={image} style={{ maxWidth: "100%" }} />
-            : "画像を生成しています...";
+            : <div className="text-center mt-2">画像を生成しています...</div>;
         return (
           <div>{result}</div>
         );
