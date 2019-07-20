@@ -61,9 +61,10 @@ class App extends React.Component<DispatchProps> {
                   <Link to="/" className="navbar-brand">TIF 2019 MyTT</Link>
                 </div>
               </nav>
-              <div className="container">
+              <div className="container" style={{ paddingBottom: 54 }}>
                 <Route path="/" exact component={Index} />
                 <Route path="/result" component={Result} />
+                <Route path="/tt/:key" component={Result} />
               </div>
             </div>
           </BrowserRouter>

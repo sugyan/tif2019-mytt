@@ -1,15 +1,23 @@
 package app
 
 import (
+	"time"
+
 	"cloud.google.com/go/datastore"
 )
 
 const (
-	kindTimeTable = "TimeTable"
+	kindTimetable = "Timetable"
+	kindResult    = "Result"
 )
 
-var keyTimeTable = datastore.IDKey(kindTimeTable, 1, nil)
+var keyTimeTable = datastore.IDKey(kindTimetable, 1, nil)
 
-type entityTimeTable struct {
-	Stages []*entry `datastore:"Stages"`
+type entityTimetable struct {
+	Stages []*entry
+}
+
+type entityResult struct {
+	IDs       []string
+	CreatedAt time.Time
 }

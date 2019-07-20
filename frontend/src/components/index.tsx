@@ -28,11 +28,11 @@ class Index extends React.Component<StateProps> {
             );
         })();
         return (
-          <div style={{ paddingBottom: 54 }}>
+          <React.Fragment>
             <Filter />
             <Timetable />
             {footer}
-          </div>
+          </React.Fragment>
         );
     }
 }

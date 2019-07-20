@@ -60,6 +60,7 @@ func fetchTimeTable() (*timetable, error) {
 
 func (app *App) storeTimeTable(timetable *timetable) error {
 	entries := []*entry{}
+	ids := map[string]struct{}{}
 	for i, s := range []*stages{timetable.Day1, timetable.Day2, timetable.Day3} {
 		dayCode := []string{"day1", "day2", "day3"}[i]
 		for j, items := range [][]*stageitem{s.HotStage, s.DollFactory, s.SkyStage, s.SmileGarden, s.FestivalStage, s.DreamStage, s.InfoCentre, s.FujiYokoStage} {
@@ -72,6 +73,11 @@ func (app *App) storeTimeTable(timetable *timetable) error {
 				}
 
 				id := fmt.Sprintf("%s-%s-%s", dayCode, stageCode, item.Start)
+				if _, exist := ids[id]; exist {
+					continue
+				}
+				ids[id] = struct{}{}
+
 				start, _ := time.Parse("2006-01-02 1504 -0700", fmt.Sprintf("2019-08-%02d %s +0900", i+2, item.Start))
 				end, _ := time.Parse("2006-01-02 1504 -0700", fmt.Sprintf("2019-08-%02d %s +0900", i+2, item.End))
 				artist := strings.Trim(item.Artist, " ")
@@ -100,7 +106,7 @@ func (app *App) storeTimeTable(timetable *timetable) error {
 	sort.SliceStable(entries, func(i, j int) bool {
 		return entries[i].Start.Unix() < entries[j].Start.Unix()
 	})
-	data := &entityTimeTable{
+	data := &entityTimetable{
 		Stages: entries,
 	}
 	if _, err := app.dsClient.Put(context.Background(), keyTimeTable, data); err != nil {

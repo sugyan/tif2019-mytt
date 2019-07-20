@@ -1,12 +1,12 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Dispatch } from "redux";
 
 import { Item } from "../common/item";
 import { escapeRegExp } from "../common/utils";
 import { TimetableAction, SelectTimetable, selectTimetableItems } from "../redux/actions";
 import { TimetableState, FilterState, FilterDays, FilterStages } from "../redux/reducers";
 import { AppState } from "../redux/store";
-import { Dispatch } from "redux";
 
 interface StateProps {
     timetable: TimetableState;
