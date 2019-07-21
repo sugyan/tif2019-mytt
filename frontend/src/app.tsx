@@ -1,5 +1,4 @@
-import "dayjs/locale/ja";
-import dayjs from "dayjs";
+import spacetime from "spacetime";
 import * as React from "react";
 import { connect } from "react-redux";
 import { BrowserRouter, Route, Link } from "react-router-dom";
@@ -35,9 +34,11 @@ class App extends React.Component<DispatchProps> {
             return response.json();
         }).then((results: ResponseItem[]): void => {
             updateTimeTable(results.map((result: ResponseItem): Item => {
-                const start = dayjs(result.start);
-                const end = dayjs(result.end);
-                const time = `${start.locale("ja").format("M/D(dd) HH:mm")} - ${end.format("HH:mm")}`;
+                const start = spacetime(result.start);
+                const end = spacetime(result.end);
+                const day: string = "日月火水木金土"[start.day()];
+                const date = `${start.unixFmt("M/d")}(${day})`;
+                const time = `${date} ${start.unixFmt("HH:mm")} - ${end.unixFmt("HH:mm")}`;
                 return {
                     id: result.id,
                     time,
