@@ -38,7 +38,6 @@ func (app *App) timetableHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) generateHandler(w http.ResponseWriter, r *http.Request) {
-	time.Sleep(time.Second * 2)
 	var ids []string
 	if err := json.NewDecoder(r.Body).Decode(&ids); err != nil {
 		log.Printf(err.Error())

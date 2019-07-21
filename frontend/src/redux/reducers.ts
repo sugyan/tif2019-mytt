@@ -6,6 +6,7 @@ import { ActionTypes, SelectTimetable, TimetableAction, FilterAction } from "./a
 export interface TimetableState {
     items:  Item[];
     selected: Set<string>;
+    image?: string;
 }
 
 export interface FilterDays {
@@ -52,6 +53,11 @@ const timetable: Reducer<TimetableState, TimetableAction> = (state: TimetableSta
         return {
             ...state,
             selected: new Set(state.selected),
+        };
+    case ActionTypes.UPDATE_GENERATED_IMAGE:
+        return {
+            ...state,
+            image: action.image,
         };
     default:
         ((_: never): void => {})(action);

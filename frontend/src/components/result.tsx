@@ -5,20 +5,21 @@ import { withRouter, RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 
 import { AppState } from "../redux/store";
-import { SelectTimetable, TimetableAction, selectTimetableItems } from "../redux/actions";
+import { SelectTimetable, TimetableAction, selectTimetableItems, updateGeneratedImage } from "../redux/actions";
 
 interface StateProps {
     selected: Set<string>;
+    image?: string;
 }
 
 interface DispatchProps {
     selectItems: (selects: SelectTimetable[]) => void;
+    updateImage: (image?: string) => void;
 }
 
 type Props = DispatchProps & StateProps & RouteComponentProps<{ key?: string }>;
 
 interface States {
-    image?: string;
     message: string;
 }
 
@@ -26,16 +27,19 @@ class Result extends React.Component<Props, States> {
     public constructor(props: Props) {
         super(props);
         this.state = {
-            message: "",
+            message: "画像を生成しています...",
         };
     }
     public componentDidMount(): void {
-        const { selected, selectItems, history, match } = this.props;
+        const { selected, selectItems, image, history, match } = this.props;
         if (selected.size == 0 && !match.params.key) {
             history.push("/");
             return;
         }
         if (match.params.key) {
+            if (image) {
+                return;
+            }
             fetch(
                 "/api/tt/" + match.params.key,
             ).then((response: Response): Promise<{ ids: string[] }> => {
@@ -57,7 +61,8 @@ class Result extends React.Component<Props, States> {
         }
     }
     public render(): JSX.Element {
-        const { image, message } = this.state;
+        const { image } = this.props;
+        const { message } = this.state;
         const result = image
             ? <img src={image} style={{ maxWidth: "100%" }} />
             : <p className="mt-2">{message}</p>;
@@ -81,10 +86,11 @@ class Result extends React.Component<Props, States> {
         );
     }
     private startGenerateImage(): void {
-        const { selected } = this.props;
+        const { selected, updateImage } = this.props;
+        updateImage();
         const interval: number = window.setInterval((): void => {
             const { message } = this.state;
-            this.setState({ message: (message || "画像を生成しています...") + "." });
+            this.setState({ message: message + "." });
         }, 500);
         fetch(
             "/api/generate", {
@@ -97,7 +103,7 @@ class Result extends React.Component<Props, States> {
         ).then((response: Response): Promise<string> => {
             return response.text();
         }).then((image: string): void => {
-            this.setState({ image });
+            updateImage(image);
         }).catch((err: Error): void => {
             this.setState({ message: err.message });
         }).finally((): void => {
@@ -128,12 +134,16 @@ export default connect(
     (state: AppState): StateProps => {
         return {
             selected: state.timetable.selected,
+            image: state.timetable.image,
         };
     },
     (dispatch: Dispatch<TimetableAction>): DispatchProps => {
         return {
             selectItems: (selects: SelectTimetable[]): void => {
                 dispatch(selectTimetableItems(selects));
+            },
+            updateImage: (image?: string): void => {
+                dispatch(updateGeneratedImage(image));
             },
         };
     }
