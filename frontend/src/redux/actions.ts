@@ -2,11 +2,13 @@ import { Action } from "redux";
 
 import { Item } from "../common/item";
 
-export const UPDATE_TIMETABLE       = "UPDATE_TIMETABLE";
-export const SELECT_TIMETABLE_ITEMS = "SELECT_TIMETABLE_ITEMS";
-export const TOGGLE_FILTER_DAYS     = "TOGGLE_FILTER_DAYS";
-export const TOGGLE_FILTER_STAGES   = "TOGGLE_FILTER_STAGES";
-export const CHANGE_FILTER_KEYWORD  = "CHANGE_FILTER_KEYWORD";
+export enum ActionTypes {
+    UPDATE_TIMETABLE       = "UPDATE_TIMETABLE",
+    SELECT_TIMETABLE_ITEMS = "SELECT_TIMETABLE_ITEMS",
+    TOGGLE_FILTER_DAYS     = "TOGGLE_FILTER_DAYS",
+    TOGGLE_FILTER_STAGES   = "TOGGLE_FILTER_STAGES",
+    CHANGE_FILTER_KEYWORD  = "CHANGE_FILTER_KEYWORD",
+}
 
 export interface SelectTimetable {
     id: string;
@@ -14,22 +16,29 @@ export interface SelectTimetable {
 }
 
 export interface UpdateTimetableAction extends Action {
+    type: ActionTypes.UPDATE_TIMETABLE;
     items: Item[];
 }
 
 export interface SelectTimetableItemsAction extends Action {
+    type: ActionTypes.SELECT_TIMETABLE_ITEMS;
     selects: SelectTimetable[];
 }
 
 export type TimetableAction = UpdateTimetableAction | SelectTimetableItemsAction;
 
-interface ToggleCheckboxAction extends Action  {
+export interface ToggleFilterDaysAction extends Action {
+    type: ActionTypes.TOGGLE_FILTER_DAYS;
     key: string;
 }
 
-export type ToggleFilterDaysAction   = ToggleCheckboxAction;
-export type ToggleFilterStagesAction = ToggleCheckboxAction;
+export interface ToggleFilterStagesAction extends Action {
+    type: ActionTypes.TOGGLE_FILTER_STAGES;
+    key: string;
+}
+
 export interface ChangeFilterKeywordAction extends Action {
+    type: ActionTypes.CHANGE_FILTER_KEYWORD;
     word: string;
 }
 
@@ -37,35 +46,35 @@ export type FilterAction = ToggleFilterDaysAction | ToggleFilterStagesAction | C
 
 export const updateTimetable = (items: Item[]): UpdateTimetableAction => {
     return {
-        type: UPDATE_TIMETABLE,
+        type: ActionTypes.UPDATE_TIMETABLE,
         items,
     };
 };
 
 export const selectTimetableItems = (selects: SelectTimetable[]): SelectTimetableItemsAction => {
     return {
-        type: SELECT_TIMETABLE_ITEMS,
+        type: ActionTypes.SELECT_TIMETABLE_ITEMS,
         selects,
     };
 };
 
 export const toggleFilterDays = (key: string): ToggleFilterDaysAction => {
     return {
-        type: TOGGLE_FILTER_DAYS,
+        type: ActionTypes.TOGGLE_FILTER_DAYS,
         key,
     };
 };
 
 export const toggleFilterStages = (key: string): ToggleFilterStagesAction => {
     return {
-        type: TOGGLE_FILTER_STAGES,
+        type: ActionTypes.TOGGLE_FILTER_STAGES,
         key,
     };
 };
 
 export const changeFilterKeyword = (word: string): ChangeFilterKeywordAction => {
     return {
-        type: CHANGE_FILTER_KEYWORD,
+        type: ActionTypes.CHANGE_FILTER_KEYWORD,
         word,
     };
 };

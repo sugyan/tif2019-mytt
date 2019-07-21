@@ -1,10 +1,7 @@
 import { combineReducers, Reducer } from "redux";
 
 import { Item } from "../common/item";
-import {
-    UPDATE_TIMETABLE, SELECT_TIMETABLE_ITEMS, TOGGLE_FILTER_DAYS, TOGGLE_FILTER_STAGES, CHANGE_FILTER_KEYWORD,
-    UpdateTimetableAction, SelectTimetable, SelectTimetableItemsAction, ToggleFilterDaysAction, ToggleFilterStagesAction, ChangeFilterKeywordAction,
-} from "./actions";
+import { ActionTypes, SelectTimetable, TimetableAction, FilterAction } from "./actions";
 
 export interface TimetableState {
     items:  Item[];
@@ -34,49 +31,41 @@ export interface FilterState {
     keyword: string;
 }
 
-const timetable: Reducer<TimetableState> = combineReducers({
-    items: (state: Item[] = [], action: UpdateTimetableAction): Item[] => {
-        switch (action.type) {
-        case UPDATE_TIMETABLE:
-            return action.items;
-        default:
-            return state;
-        }
-    },
-    selected: (state: Set<string> = new Set(), action: SelectTimetableItemsAction): Set<string> => {
-        switch (action.type) {
-        case SELECT_TIMETABLE_ITEMS:
-            action.selects.forEach((value: SelectTimetable): void => {
-                if (value.selected) {
-                    state.add(value.id);
-                } else {
-                    state.delete(value.id);
-                }
-            });
-            return new Set(state);
-        default:
-            return state;
-        }
-    },
-});
+const timetable: Reducer<TimetableState, TimetableAction> = (state: TimetableState = {
+    items: [],
+    selected: new Set(),
+}, action: TimetableAction): TimetableState => {
+    switch (action.type) {
+    case ActionTypes.UPDATE_TIMETABLE:
+        return {
+            ...state,
+            items: action.items,
+        };
+    case ActionTypes.SELECT_TIMETABLE_ITEMS:
+        action.selects.forEach((value: SelectTimetable): void => {
+            if (value.selected) {
+                state.selected.add(value.id);
+            } else {
+                state.selected.delete(value.id);
+            }
+        });
+        return {
+            ...state,
+            selected: new Set(state.selected),
+        };
+    default:
+        ((_: never): void => {})(action);
+        return state;
+    }
+};
 
-const filter: Reducer<FilterState> = combineReducers({
-    days: (state: FilterDays = {
+const filter: Reducer<FilterState, FilterAction> = (state: FilterState = {
+    days: {
         day1: true,
         day2: true,
         day3: true,
-    }, action: ToggleFilterDaysAction): FilterDays => {
-        switch (action.type) {
-        case TOGGLE_FILTER_DAYS:
-            return {
-                ...state,
-                [action.key]: !state[action.key as keyof FilterDays],
-            };
-        default:
-            return state;
-        }
     },
-    stages: (state: FilterStages = {
+    stages: {
         hotstage:      true,
         dollfactory:   true,
         skystage:      true,
@@ -85,26 +74,36 @@ const filter: Reducer<FilterState> = combineReducers({
         dreamstage:    true,
         infocentre:    true,
         fujiyokostage: true,
-    }, action: ToggleFilterStagesAction): FilterStages => {
-        switch (action.type) {
-        case TOGGLE_FILTER_STAGES:
-            return {
-                ...state,
-                [action.key]: !state[action.key as keyof FilterStages],
-            };
-        default:
-            return state;
-        }
     },
-    keyword: (state: string = "", action: ChangeFilterKeywordAction): string => {
-        switch (action.type) {
-        case CHANGE_FILTER_KEYWORD:
-            return action.word;
-        default:
-            return state;
-        }
-    },
-});
+    keyword: "",
+}, action: FilterAction): FilterState => {
+    switch (action.type) {
+    case ActionTypes.TOGGLE_FILTER_DAYS:
+        return {
+            ...state,
+            days: {
+                ...state.days,
+                [action.key]: !state.days[action.key as keyof FilterDays],
+            },
+        };
+    case ActionTypes.TOGGLE_FILTER_STAGES:
+        return {
+            ...state,
+            stages: {
+                ...state.stages,
+                [action.key]: !state.stages[action.key as keyof FilterStages],
+            },
+        };
+    case ActionTypes.CHANGE_FILTER_KEYWORD:
+        return {
+            ...state,
+            keyword: action.word,
+        };
+    default:
+        ((_: never): void => {})(action);
+        return state;
+    }
+};
 
 export default combineReducers({
     timetable,
