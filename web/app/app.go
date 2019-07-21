@@ -9,11 +9,13 @@ import (
 	"path/filepath"
 
 	"cloud.google.com/go/datastore"
+	"github.com/ChimeraCoder/anaconda"
 )
 
 // App type
 type App struct {
 	dsClient *datastore.Client
+	twClient *anaconda.TwitterApi
 }
 
 // NewApp function
@@ -22,8 +24,15 @@ func NewApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
+	anaconda.SetConsumerKey(os.Getenv("TWITTER_CONSUMER_KEY"))
+	anaconda.SetConsumerSecret(os.Getenv("TWITTER_CONSUMER_SECRET"))
+	twClient := anaconda.NewTwitterApi(
+		os.Getenv("TWITTER_ACCESS_TOKEN"),
+		os.Getenv("TWITTER_ACCESS_TOKEN_SECRET"),
+	)
 	return &App{
 		dsClient,
+		twClient,
 	}, nil
 }
 

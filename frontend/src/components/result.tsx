@@ -7,6 +7,11 @@ import { Link } from "react-router-dom";
 import { AppState } from "../redux/store";
 import { SelectTimetable, TimetableAction, selectTimetableItems, updateGeneratedImage } from "../redux/actions";
 
+interface TTResponse {
+    ids: string[];
+    image_url: string;
+}
+
 interface StateProps {
     selected: Set<string>;
     image?: string;
@@ -21,6 +26,8 @@ type Props = DispatchProps & StateProps & RouteComponentProps<{ key?: string }>;
 
 interface States {
     message: string;
+    fetching: boolean;
+    imageUrl?: string;
 }
 
 class Result extends React.Component<Props, States> {
@@ -28,31 +35,33 @@ class Result extends React.Component<Props, States> {
         super(props);
         this.state = {
             message: "画像を生成しています...",
+            fetching: false,
         };
     }
     public componentDidMount(): void {
-        const { selected, selectItems, image, history, match } = this.props;
+        const { selected, selectItems, history, match } = this.props;
         if (selected.size == 0 && !match.params.key) {
             history.push("/");
             return;
         }
         if (match.params.key) {
-            if (image) {
-                return;
-            }
             fetch(
                 "/api/tt/" + match.params.key,
-            ).then((response: Response): Promise<{ ids: string[] }> => {
+            ).then((response: Response): Promise<TTResponse> => {
                 if (response.ok) {
                     return response.json();
                 } else {
                     throw new Error(response.statusText);
                 }
-            }).then((results: { ids: string[] }): void => {
-                selectItems(results.ids.map((id: string): SelectTimetable => {
+            }).then((result: TTResponse): void => {
+                const { image } = this.props;
+                this.setState({ imageUrl: result.image_url });
+                selectItems(result.ids.map((id: string): SelectTimetable => {
                     return { id, selected: true };
                 }));
-                this.startGenerateImage();
+                if (!image) {
+                    this.startGenerateImage();
+                }
             }).catch((err: Error): void => {
                 console.error(err.message);
             });
@@ -61,11 +70,32 @@ class Result extends React.Component<Props, States> {
         }
     }
     public render(): JSX.Element {
-        const { image } = this.props;
-        const { message } = this.state;
-        const result = image
+        const { image, match } = this.props;
+        const { message, fetching, imageUrl } = this.state;
+        const result: JSX.Element = image
             ? <img src={image} style={{ maxWidth: "100%" }} />
             : <p className="mt-2">{message}</p>;
+        const button: JSX.Element = match.params.key
+            ? (
+              <a
+                  className="btn btn-primary"
+                  href={
+                      "https://twitter.com/intent/tweet?hashtags=TIF2019_MyTT"
+                      + "&text=" + encodeURIComponent(`今年のタイテ ${imageUrl}`)
+                      + "&url=" + encodeURIComponent(window.location.href)}
+                  target="_blank"
+                  rel="noopener noreferrer">
+                Tweetする
+              </a>
+            )
+            : (
+              <button
+                  className="btn btn-info"
+                  disabled={!image || fetching}
+                  onClick={this.onClickShareButton.bind(this)}>
+                    共有用URLを生成
+              </button>
+            );
         return (
           <React.Fragment>
             {result}
@@ -74,12 +104,7 @@ class Result extends React.Component<Props, States> {
                 <Link to="/" className="btn btn-outline-dark">選び直す</Link>
               </div>
               <div className="float-right">
-                <button
-                    className="btn btn-info"
-                    disabled={!image}
-                    onClick={this.onClickShareButton.bind(this)}>
-                  共有用URLを生成
-                </button>
+                {button}
               </div>
             </nav>
           </React.Fragment>
@@ -113,6 +138,7 @@ class Result extends React.Component<Props, States> {
     }
     private onClickShareButton(): void {
         const { selected, history } = this.props;
+        this.setState({ fetching: true });
         fetch(
             "/api/share", {
                 method: "POST",
@@ -123,10 +149,11 @@ class Result extends React.Component<Props, States> {
             },
         ).then((response: Response): Promise<{ key: string }> => {
             return response.json();
-        }).then((data: { key: string }): void => {
-            history.push(`/tt/${data.key}`);
+        }).then((result: { key: string }): void => {
+            history.push(`/tt/${result.key}`);
         }).catch((err: Error): void => {
             console.error(err.message);
+            this.setState({ fetching: false });
         });
     }
 }

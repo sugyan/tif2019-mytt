@@ -7,3 +7,10 @@ handlers:
 - url: /.*
   script: auto
   secure: always
+
+includes:
+- env.yaml
+
+automatic_scaling:
+  max_instances: 2
+  max_idle_instances: 1

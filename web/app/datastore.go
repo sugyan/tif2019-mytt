@@ -19,5 +19,6 @@ type entityTimetable struct {
 
 type entityResult struct {
 	IDs       []string
+	ImageURL  string
 	CreatedAt time.Time
 }
