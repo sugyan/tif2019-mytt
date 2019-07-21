@@ -1,0 +1,4 @@
+cron:
+- description: "update timetable"
+  url: /admin/update
+  schedule: every 24 hours

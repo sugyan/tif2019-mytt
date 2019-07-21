@@ -30,6 +30,11 @@ func (app *App) adminHandler() http.Handler {
 }
 
 func (app *App) updateHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("X-Appengine-Cron") != "true" {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
 	timetable, err := fetchTimeTable()
 	if err != nil {
 		log.Printf(err.Error())
