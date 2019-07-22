@@ -3,8 +3,6 @@ package app
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
-	"os"
 	"os/exec"
 	"sort"
 	"strings"
@@ -88,39 +86,15 @@ func (app *App) generateImage(stages []*entry) ([]byte, error) {
 	// execute commands
 	buf := bytes.NewBuffer(nil)
 	for _, command := range commands {
-		out, err := command.StdoutPipe()
+		out, err := command.Output()
 		if err != nil {
 			return nil, err
 		}
-		if err := command.Start(); err != nil {
-			return nil, err
-		}
-		if _, err := buf.ReadFrom(out); err != nil {
-			return nil, err
-		}
-		if err := command.Wait(); err != nil {
+		if _, err := buf.Write(out); err != nil {
 			return nil, err
 		}
 	}
-
-	// obtain output image data
-	file, err := ioutil.TempFile("", "*.png")
-	if err != nil {
-		return nil, err
-	}
-	defer os.Remove(file.Name())
-
-	cmd := exec.Command(convert, "-", "-append", file.Name())
+	cmd := exec.Command(convert, "-", "-append", "png:-")
 	cmd.Stdin = buf
-	if err := cmd.Run(); err != nil {
-		return nil, err
-	}
-
-	image, err := os.Open(file.Name())
-	if err != nil {
-		return nil, err
-	}
-	defer image.Close()
-
-	return ioutil.ReadAll(image)
+	return cmd.Output()
 }
