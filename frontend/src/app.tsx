@@ -73,7 +73,7 @@ class App extends React.Component<DispatchProps> {
     }
 }
 export default connect(
-    (state: AppState): AppState => state,
+    (state: AppState) => state,
     (dispatch: Dispatch<TimetableAction>): DispatchProps => {
         return {
             updateTimeTable: (items: Item[]): void => {

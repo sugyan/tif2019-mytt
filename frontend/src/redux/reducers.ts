@@ -111,7 +111,7 @@ const filter: Reducer<FilterState, FilterAction> = (state: FilterState = {
     }
 };
 
-export default combineReducers({
+export const reducers = combineReducers({
     timetable,
     filter,
 });
