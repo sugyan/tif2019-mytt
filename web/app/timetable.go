@@ -15,6 +15,7 @@ type stages struct {
 	DreamStage    []*stageitem `json:"DREAM STAGE"`
 	InfoCentre    []*stageitem `json:"INFO CENTRE"`
 	FujiYokoStage []*stageitem `json:"FUJI YOKO STAGE"`
+	GreetingArea  []*stageitem
 }
 
 type stageitem struct {

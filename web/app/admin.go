@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -41,7 +42,14 @@ func (app *App) updateHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	if err := app.storeTimeTable(timetable); err != nil {
+	greeting, err := fetchGreeting()
+	if err != nil {
+		log.Printf(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	if err := app.storeTimeTable(timetable, greeting); err != nil {
 		log.Printf(err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -63,7 +71,46 @@ func fetchTimeTable() (*timetable, error) {
 	return &timetable, nil
 }
 
-func (app *App) storeTimeTable(timetable *timetable) error {
+func fetchGreeting() (*timetable, error) {
+	resp, err := http.Get("http://www.idolfes.com/2019/greeting/greeting.tsv")
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	timetable := &timetable{
+		Day1: &stages{GreetingArea: []*stageitem{}},
+		Day2: &stages{GreetingArea: []*stageitem{}},
+		Day3: &stages{GreetingArea: []*stageitem{}},
+	}
+	scanner := bufio.NewScanner(resp.Body)
+	for scanner.Scan() {
+		row := strings.Split(scanner.Text(), "\t")
+		times := strings.SplitN(row[1], "～", 2)
+		for i := 2; i < len(row); i++ {
+			if row[i] == "" {
+				continue
+			}
+			item := &stageitem{
+				Start:  times[0],
+				End:    times[1],
+				Artist: row[i],
+				Detail: string('A' + i - 2),
+			}
+			switch row[0] {
+			case "day1":
+				timetable.Day1.GreetingArea = append(timetable.Day1.GreetingArea, item)
+			case "day2":
+				timetable.Day2.GreetingArea = append(timetable.Day2.GreetingArea, item)
+			case "day3":
+				timetable.Day3.GreetingArea = append(timetable.Day3.GreetingArea, item)
+			}
+		}
+	}
+	return timetable, nil
+}
+
+func (app *App) storeTimeTable(timetable, greeting *timetable) error {
 	entries := []*entry{}
 	ids := map[string]struct{}{}
 	for i, s := range []*stages{timetable.Day1, timetable.Day2, timetable.Day3} {
@@ -106,6 +153,28 @@ func (app *App) storeTimeTable(timetable *timetable) error {
 					Details:   details,
 				})
 			}
+		}
+	}
+	for i, s := range []*stages{greeting.Day1, greeting.Day2, greeting.Day3} {
+		dayCode := []string{"day1", "day2", "day3"}[i]
+		items := s.GreetingArea
+		stageCode := "greetingarea"
+		for _, item := range items {
+			id := fmt.Sprintf("%s-%s-%s-%s", dayCode, stageCode, strings.Replace(item.Start, "：", "", -1), item.Detail)
+			start, _ := time.Parse("2006-01-02 15：04 -0700", fmt.Sprintf("2019-08-%02d %s +0900", i+2, item.Start))
+			end, _ := time.Parse("2006-01-02 15：04 -0700", fmt.Sprintf("2019-08-%02d %s +0900", i+2, item.End))
+			artist := strings.Trim(item.Artist, " ")
+			details := []string{}
+			entries = append(entries, &entry{
+				ID:        id,
+				DayCode:   dayCode,
+				StageName: fmt.Sprintf("GREETING AREA (%s)", item.Detail),
+				StageCode: stageCode,
+				Start:     start,
+				End:       end,
+				Artist:    artist,
+				Details:   details,
+			})
 		}
 	}
 	sort.SliceStable(entries, func(i, j int) bool {

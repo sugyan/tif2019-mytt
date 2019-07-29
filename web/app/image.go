@@ -23,6 +23,7 @@ var colorMap = map[string]string{
 	"dreamstage":    "#00C858",
 	"infocentre":    "#FB3CA6",
 	"fujiyokostage": "#06708F",
+	"greetingarea":  "#808080",
 }
 
 func (app *App) generateImage(stages []*entry) ([]byte, error) {

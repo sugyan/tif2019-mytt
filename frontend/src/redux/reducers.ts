@@ -24,6 +24,7 @@ export interface FilterStages {
     dreamstage:    boolean;
     infocentre:    boolean;
     fujiyokostage: boolean;
+    greetingarea:  boolean;
 }
 
 export interface FilterState {
@@ -80,6 +81,7 @@ const filter: Reducer<FilterState, FilterAction> = (state: FilterState = {
         dreamstage:    true,
         infocentre:    true,
         fujiyokostage: true,
+        greetingarea:  false,
     },
     keyword: "",
 }, action: FilterAction): FilterState => {

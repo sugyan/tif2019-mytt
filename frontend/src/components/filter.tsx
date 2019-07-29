@@ -46,6 +46,7 @@ class Filter extends React.Component<Props, State> {
             { key: "festivalstage", label: "FESTIVAL STAGE"  },
             { key: "fujiyokostage", label: "FUJI YOKO STAGE" },
             { key: "infocentre",    label: "INFO CENTRE"     },
+            { key: "greetingarea",  label: "GREETING AREA"   },
         ];
         this.state = { keyword: props.filter.keyword };
     }
